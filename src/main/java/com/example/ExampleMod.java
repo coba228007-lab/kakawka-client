@@ -11,19 +11,19 @@ public class ExampleMod implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        // Логика кнопки Right Shift
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.player == null) return;
+            
+            // Нажатие на Правый Шифт
             if (GLFW.glfwGetKey(client.getWindow().getHandle(), GLFW.GLFW_KEY_RIGHT_SHIFT) == GLFW.GLFW_PRESS) {
                 menuOpen = !menuOpen;
                 try { Thread.sleep(200); } catch (Exception e) {}
             }
         });
 
-        // Отрисовка текста меню
         HudRenderCallback.EVENT.register((matrixStack, tickDelta) -> {
             if (menuOpen) {
-                MinecraftClient.getInstance().textRenderer.draw(matrixStack, "--- KAKAWKA CLIENT ACTIVE ---", 10, 10, 0xFF0000);
+                MinecraftClient.getInstance().textRenderer.draw(matrixStack, "--- KAKAWKA CLIENT ---", 10, 10, 0xFF0000);
             }
         });
     }
