@@ -1,24 +1,30 @@
 package com.example;
 
 import net.fabricmc.api.ModInitializer;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.minecraft.client.MinecraftClient;
+import org.lwjgl.glfw.GLFW;
 
 public class ExampleMod implements ModInitializer {
-	public static final String MOD_ID = "modid";
+    private boolean menuOpen = false;
 
-	// This logger is used to write text to the console and the log file.
-	// It is considered best practice to use your mod id as the logger's name.
-	// That way, it's clear which mod wrote info, warnings, and errors.
-	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    @Override
+    public void onInitialize() {
+        // Логика кнопки Right Shift
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            if (client.player == null) return;
+            if (GLFW.glfwGetKey(client.getWindow().getHandle(), GLFW.GLFW_KEY_RIGHT_SHIFT) == GLFW.GLFW_PRESS) {
+                menuOpen = !menuOpen;
+                try { Thread.sleep(200); } catch (Exception e) {}
+            }
+        });
 
-	@Override
-	public void onInitialize() {
-		// This code runs as soon as Minecraft is in a mod-load-ready state.
-		// However, some things (like resources) may still be uninitialized.
-		// Proceed with mild caution.
-
-		LOGGER.info("Hello Fabric world!");
-	}
+        // Отрисовка текста меню
+        HudRenderCallback.EVENT.register((matrixStack, tickDelta) -> {
+            if (menuOpen) {
+                MinecraftClient.getInstance().textRenderer.draw(matrixStack, "--- KAKAWKA CLIENT ACTIVE ---", 10, 10, 0xFF0000);
+            }
+        });
+    }
 }
